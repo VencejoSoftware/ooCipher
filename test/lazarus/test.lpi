@@ -27,7 +27,7 @@
           <PathDelim Value="\"/>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\..\..\3rd_party\dunit-agiledoxtestrunner;..\..\..\ooBatch\code;..\..\code;..\code"/>
+            <OtherUnitFiles Value="..\..\..\3rd_party\dunit-agiledoxtestrunner;$env(delphiooLib)\ooBatch\code;..\..\code;..\code"/>
             <UnitOutputDirectory Value="..\build\debug"/>
           </SearchPaths>
           <Parsing>
@@ -66,7 +66,7 @@
           <PathDelim Value="\"/>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\..\..\3rd_party\dunit-agiledoxtestrunner;..\..\..\ooBatch\code;..\..\code;..\code"/>
+            <OtherUnitFiles Value="..\..\..\3rd_party\dunit-agiledoxtestrunner;$env(delphiooLib)\ooBatch\code;..\..\code;..\code"/>
             <UnitOutputDirectory Value="..\build\release"/>
           </SearchPaths>
           <Parsing>
@@ -136,7 +136,7 @@
     <PathDelim Value="\"/>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\..\..\3rd_party\dunit-agiledoxtestrunner;..\..\..\ooBatch\code;..\..\code;..\code"/>
+      <OtherUnitFiles Value="..\..\..\3rd_party\dunit-agiledoxtestrunner;$env(delphiooLib)\ooBatch\code;..\..\code;..\code"/>
       <UnitOutputDirectory Value="..\build\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Parsing>
