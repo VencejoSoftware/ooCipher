@@ -71,7 +71,7 @@ type
     _Key: string;
     _MinNoise, _MaxNoise: TCryptoNoise;
   public const
-    Codes64 = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+/';
+    CODES_64 = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+/';
   private
     function DecodePWDEx(const Text, SecurityString: string): string;
     function EncodePWDEx(const Text, SecurityString: string; const MinNoise, MaxNoise: TCryptoNoise): string;
@@ -80,9 +80,7 @@ type
   public
     function Encode(const Text: string): string;
     function Decode(const Text: string): string;
-
     constructor Create(const Key: string; const MinNoise, MaxNoise: TCryptoNoise);
-
     class function New(const Key: string; const MinNoise: TCryptoNoise = 0; MaxNoise: TCryptoNoise = 5): ICryptoText;
   end;
 
@@ -129,7 +127,7 @@ begin
     Result := (Pos(SecurityString[i], s1) < 1);
     if not Result then
       Break;
-    Result := (Pos(SecurityString[i], Codes64) > 0);
+    Result := (Pos(SecurityString[i], CODES_64) > 0);
     if not Result then
       Break;
   end;
@@ -153,7 +151,7 @@ begin
   end;
   if not IsValidSecurityString(SecurityString) then
     raise ECryptoText.Create('Can not validate security string');
-  s1 := Codes64;
+  s1 := CODES_64;
   s2 := '';
   for i := 1 to Length(SecurityString) do
   begin
@@ -183,7 +181,7 @@ begin
   if not IsValidSecurityString(SecurityString) then
     raise ECryptoText.Create('Can not validate security string');
   Data := Text;
-  s1 := Codes64;
+  s1 := CODES_64;
   s2 := '';
   ss := SecurityString;
   for i := 1 to Length(Data) do

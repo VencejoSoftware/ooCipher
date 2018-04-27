@@ -8,7 +8,8 @@ program test;
 uses
   ooRunTest,
   ooCrypto.Text.RandomNoise.RandomKey_test in '..\code\ooCrypto.Text.RandomNoise.RandomKey_test.pas',
-  ooCrypto.Text.RandomNoise_test in '..\code\ooCrypto.Text.RandomNoise_test.pas';
+  ooCrypto.Text.RandomNoise_test in '..\code\ooCrypto.Text.RandomNoise_test.pas',
+  ooCrypto.Text.Base64_test in '..\code\ooCrypto.Text.Base64_test.pas';
 
 {R *.RES}
 

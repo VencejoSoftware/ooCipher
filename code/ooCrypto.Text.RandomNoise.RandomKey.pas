@@ -49,7 +49,7 @@ var
   i, NewCharIndex, LenGenerated: integer;
   BaseText: string;
 begin
-  BaseText := TCryptoTextRandomNoise.Codes64;
+  BaseText := TCryptoTextRandomNoise.CODES_64;
   Result := '';
   for i := 0 to _Size do
   begin
