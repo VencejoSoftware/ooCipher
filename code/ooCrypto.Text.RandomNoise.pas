@@ -1,12 +1,12 @@
 {$REGION 'documentation'}
 {
-  Copyright (c) 2016, Vencejo Software
+  Copyright (c) 2018, Vencejo Software
   Distributed under the terms of the Modified BSD License
   The full license is distributed with this software
 }
 {
   Object to encrypt/decrypt text with random noise algorithm
-  @created(08/04/2016)
+  @created(19/05/2018)
   @author Vencejo Software <www.vencejosoft.com>
 }
 {$ENDREGION}
@@ -21,7 +21,7 @@ type
 {$REGION 'documentation'}
 {
   @abstract(Implementation of @link(ICryptoText))
-  Use a random noise algorithm the crypt/decrypt texts
+  Use a random noise algorithm to encrypt/decrypt text
   @member(Encode @SeeAlso(ICryptoText.Encode))
   @member(Decode @SeeAlso(ICryptoText.Decode))
   @member(Codes64 Base text to use in algorithm)
@@ -75,7 +75,7 @@ type
   private
     function DecodePWDEx(const Text, SecurityString: string): string;
     function EncodePWDEx(const Text, SecurityString: string; const MinNoise, MaxNoise: TCryptoNoise): string;
-    function MakeRNDString(const Chars: string; const Count: integer): string;
+    function MakeRNDString(const Chars: string; const Count: Cardinal): string;
     function IsValidSecurityString(const SecurityString: string): Boolean;
   public
     function Encode(const Text: string): string;
@@ -96,9 +96,9 @@ begin
   Result := EncodePWDEx(Text, _Key, _MinNoise, _MaxNoise);
 end;
 
-function TCryptoTextRandomNoise.MakeRNDString(const Chars: string; const Count: integer): string;
+function TCryptoTextRandomNoise.MakeRNDString(const Chars: string; const Count: Cardinal): string;
 var
-  i, x, LenBaseChars: integer;
+  i, x, LenBaseChars: Cardinal;
   BaseChars: string;
 begin
   Result := '';
@@ -106,7 +106,7 @@ begin
   for i := 0 to Pred(Count) do
   begin
     LenBaseChars := Length(BaseChars);
-    x := LenBaseChars - Random(LenBaseChars);
+    x := LenBaseChars - Cardinal(Random(LenBaseChars));
     Result := Result + BaseChars[x];
     BaseChars := Copy(BaseChars, 1, Pred(x)) + Copy(BaseChars, Succ(x), LenBaseChars);
   end;
@@ -124,12 +124,9 @@ begin
   for i := 1 to LenSecStr do
   begin
     s1 := Copy(SecurityString, Succ(i), LenSecStr);
-    Result := (Pos(SecurityString[i], s1) < 1);
+    Result := (Pos(SecurityString[i], s1) < 1) and (Pos(SecurityString[i], CODES_64) > 0);
     if not Result then
-      Break;
-    Result := (Pos(SecurityString[i], CODES_64) > 0);
-    if not Result then
-      Break;
+      raise ECryptoText.Create('Can not validate security string');
   end;
 end;
 
@@ -138,19 +135,8 @@ function TCryptoTextRandomNoise.EncodePWDEx(const Text, SecurityString: string;
 var
   i, x: integer;
   s1, s2, ss: string;
-  MinV, MaxV: TCryptoNoise;
 begin
   Result := '';
-  MinV := MinNoise;
-  MaxV := MaxNoise;
-  if MinV > MaxV then
-  begin
-    i := MinV;
-    MinV := MaxV;
-    MaxV := i;
-  end;
-  if not IsValidSecurityString(SecurityString) then
-    raise ECryptoText.Create('Can not validate security string');
   s1 := CODES_64;
   s2 := '';
   for i := 1 to Length(SecurityString) do
@@ -167,9 +153,9 @@ begin
     s2 := s2 + ss[Ord(Text[i]) div 16 + 1];
     ss := Copy(ss, Length(ss), 1) + Copy(ss, 1, Pred(Length(ss)));
   end;
-  Result := MakeRNDString(s1, Random(MaxV - MinV) + MinV + 1);
+  Result := MakeRNDString(s1, Succ(Random(MaxNoise - MinNoise) + MinNoise));
   for i := 1 to Length(s2) do
-    Result := Result + s2[i] + MakeRNDString(s1, Random(MaxV - MinV) + MinV);
+    Result := Result + s2[i] + MakeRNDString(s1, Succ(Random(MaxNoise - MinNoise) + MinNoise));
 end;
 
 function TCryptoTextRandomNoise.DecodePWDEx(const Text, SecurityString: string): string;
@@ -178,8 +164,6 @@ var
   Data, s1, s2, ss: string;
 begin
   Result := #1;
-  if not IsValidSecurityString(SecurityString) then
-    raise ECryptoText.Create('Can not validate security string');
   Data := Text;
   s1 := CODES_64;
   s2 := '';
@@ -209,8 +193,18 @@ end;
 
 constructor TCryptoTextRandomNoise.Create(const Key: string; const MinNoise, MaxNoise: TCryptoNoise);
 begin
-  _MinNoise := MinNoise;
-  _MaxNoise := MaxNoise;
+  if not IsValidSecurityString(Key) then
+    Exit;
+  if MinNoise > MaxNoise then
+  begin
+    _MinNoise := MaxNoise;
+    _MaxNoise := MinNoise;
+  end
+  else
+  begin
+    _MinNoise := MinNoise;
+    _MaxNoise := MaxNoise;
+  end;
   _Key := Key;
 end;
 

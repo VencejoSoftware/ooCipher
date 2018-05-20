@@ -18,12 +18,13 @@ uses
 {$ENDIF};
 
 type
-  TCryptoTextBase64Test = class(TTestCase)
+  TCryptoTextBase64Test = class sealed(TTestCase)
   published
     procedure EncodedIsSomething;
     procedure DecodedIsText;
     procedure EncodeEmptyIsEmpty;
     procedure DecodeEmptyIsEmpty;
+    procedure EncodedLargeIsSomething;
   end;
 
 implementation
@@ -36,6 +37,12 @@ end;
 procedure TCryptoTextBase64Test.EncodedIsSomething;
 begin
   CheckEquals('VGVzdCAxMjM0IEAg0Q==', TCryptoTextBase64.New.Encode('Test 1234 @ Ñ'));
+end;
+
+procedure TCryptoTextBase64Test.EncodedLargeIsSomething;
+begin
+  CheckEquals('VGVzdCAxMjM0IEAg0VRlc3QgMTIzNCBAINFUZXN0IDEyMzQgQCDRVGVzdCAxMjM0IEAg0VRlc3QgMTIzNCBAINE=',
+    TCryptoTextBase64.New.Encode('Test 1234 @ ÑTest 1234 @ ÑTest 1234 @ ÑTest 1234 @ ÑTest 1234 @ Ñ'));
 end;
 
 procedure TCryptoTextBase64Test.DecodeEmptyIsEmpty;

@@ -6,7 +6,7 @@
 }
 {
   Object to encrypt/decrypt text in base 64
-  @created(19/04/2018)
+  @created(19/05/2018)
   @author Vencejo Software <www.vencejosoft.com>
 }
 {$ENDREGION}
@@ -22,7 +22,7 @@ type
 {$REGION 'documentation'}
 {
   @abstract(Implementation of @link(ICryptoText))
-  Use a random noise algorithm the crypt/decrypt texts
+  Encode and decodete text using base 64 algorithm
   @member(Encode @SeeAlso(ICryptoText.Encode))
   @member(Decode @SeeAlso(ICryptoText.Decode))
   @member(

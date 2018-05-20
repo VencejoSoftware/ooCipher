@@ -1,7 +1,22 @@
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+[![Build Status](https://travis-ci.org/VencejoSoftware/ooCrypt.svg?branch=master)](https://travis-ci.org/VencejoSoftware/ooCrypt)
 
 # ooCrypt- Object pascal cryptographic utils
-Code to encrypt/decrypt string data
+Code to encrypt/decrypt text data
+
+### Example of encode/decode with base 64
+```pascal
+  Decoded := TCryptoTextBase64.New.Decode('VGVzdCAxMjM0IEAg0Q==');
+  ...
+  Encoded := TCryptoTextBase64.New.Encode('Test 1234 @ Ñ');
+```
+
+### Example of encode/decode with noise algorithm
+```pascal
+  Decoded := TCryptoTextRandomNoise.New('123456781234567812345678').Decode('~+*@!#$%_');
+  ...
+  Encoded := TCryptoTextRandomNoise.New('123456781234567812345678').Encode('text');
+```
 
 ### Documentation
 If not exists folder "code-documentation" then run the batch "build_doc". The main entry is ./doc/index.html
