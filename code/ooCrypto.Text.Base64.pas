@@ -15,7 +15,6 @@ unit ooCrypto.Text.Base64;
 interface
 
 uses
-  SysUtils,
   ooCrypto.Text.Intf;
 
 type
@@ -62,7 +61,7 @@ var
   x1, x2, x3, x4, xt: Byte;
   Encoded, Decoded: AnsiString;
 begin
-  Decoded := EmptyAnsiStr;
+  Decoded := '';
   Encoded := AnsiString(Text);
   SrcLen := Length(Text);
   Times := SrcLen div 4;
@@ -98,7 +97,7 @@ var
   xt: Byte;
   Encoded, Decoded: AnsiString;
 begin
-  Encoded := EmptyAnsiStr;
+  Encoded := '';
   Decoded := AnsiString(Text);
   LenSrc := Length(Decoded);
   if LenSrc mod 3 = 0 then
