@@ -6,15 +6,15 @@
 program test;
 
 uses
-  ooRunTest,
-  ooCrypto.Text.RandomNoise.RandomKey_test in '..\code\ooCrypto.Text.RandomNoise.RandomKey_test.pas',
-  ooCrypto.Text.RandomNoise_test in '..\code\ooCrypto.Text.RandomNoise_test.pas',
-  ooCrypto.Text.Base64_test in '..\code\ooCrypto.Text.Base64_test.pas',
-  ooCrypto.Text.Base64 in '..\..\code\ooCrypto.Text.Base64.pas',
-  ooCrypto.Text.Intf in '..\..\code\ooCrypto.Text.Intf.pas',
-  ooCrypto.Text.RandomKey.Intf in '..\..\code\ooCrypto.Text.RandomKey.Intf.pas',
-  ooCrypto.Text.RandomNoise in '..\..\code\ooCrypto.Text.RandomNoise.pas',
-  ooCrypto.Text.RandomNoise.RandomKey in '..\..\code\ooCrypto.Text.RandomNoise.RandomKey.pas';
+  RunTest,
+  NoiseRandomKey_test in '..\code\NoiseRandomKey_test.pas',
+  RandomNoiseCipher_test in '..\code\RandomNoiseCipher_test.pas',
+  Base64Cipher_test in '..\code\Base64Cipher_test.pas',
+  Base64Cipher in '..\..\code\Base64Cipher.pas',
+  Cipher in '..\..\code\Cipher.pas',
+  RandomKey in '..\..\code\RandomKey.pas',
+  RandomNoiseCipher in '..\..\code\RandomNoiseCipher.pas',
+  NoiseRandomKey in '..\..\code\NoiseRandomKey.pas';
 
 {R *.RES}
 

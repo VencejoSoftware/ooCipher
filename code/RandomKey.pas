@@ -10,7 +10,7 @@
   @author Vencejo Software <www.vencejosoft.com>
 }
 {$ENDREGION}
-unit ooCrypto.Text.RandomKey.Intf;
+unit RandomKey;
 
 interface
 
@@ -25,7 +25,7 @@ type
   )
 }
 {$ENDREGION}
-  ICryptoTextRandomKey = interface
+  IRandomKey = interface
     ['{E1A41D6F-8DAE-414D-AA67-CDF1FE90854F}']
     function Build: String;
   end;
