@@ -10,7 +10,7 @@ interface
 uses
   SysUtils, Classes, Graphics,
   Controls, Forms, Dialogs, StdCtrls,
-  ooCrypto.Text.Intf, ooCrypto.Text.RandomNoise, ooCrypto.Text.RandomNoise.RandomKey;
+  Cipher, RandomNoiseCipher, NoiseRandomKey;
 
 type
   TMainForm = class(TForm)
@@ -32,10 +32,10 @@ implementation
 procedure TMainForm.Button1Click(Sender: TObject);
 var
   SC, Encoded, Decoded: String;
-  CryptoTextRandomNoise: ICryptoText;
+  CryptoTextRandomNoise: ICipher;
 begin
-  SC := TCryptoTextRandomNoiseRandomKey.New.Build;
-  CryptoTextRandomNoise := TCryptoTextRandomNoise.New(SC);
+  SC := TNoiseRandomKey.New.Build;
+  CryptoTextRandomNoise := TRandomNoiseCipher.New(SC);
   Encoded := CryptoTextRandomNoise.Encode(Edit1.Text);
   Memo1.Lines.Add(Encoded);
   Decoded := CryptoTextRandomNoise.Decode(Encoded);
@@ -48,17 +48,17 @@ const
   MAX_ITEMS = 10000;
 var
   SC, Normal, Encoded, Decoded: String;
-  CryptoTextRandomNoise: ICryptoText;
+  CryptoTextRandomNoise: ICipher;
   i: Integer;
 begin
-  SC := TCryptoTextRandomNoiseRandomKey.New.Build;
+  SC := TNoiseRandomKey.New.Build;
   Memo1.Clear;
   Memo1.Lines.BeginUpdate;
   try
     for i := 0 to MAX_ITEMS do
     begin
-      Normal := TCryptoTextRandomNoiseRandomKey.New.Build;
-      CryptoTextRandomNoise := TCryptoTextRandomNoise.New(SC);
+      Normal := TNoiseRandomKey.New.Build;
+      CryptoTextRandomNoise := TRandomNoiseCipher.New(SC);
       Encoded := CryptoTextRandomNoise.Encode(Normal);
       Memo1.Lines.Add(Encoded);
       Decoded := CryptoTextRandomNoise.Decode(Encoded);

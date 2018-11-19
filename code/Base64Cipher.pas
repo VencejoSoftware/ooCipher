@@ -10,12 +10,12 @@
   @author Vencejo Software <www.vencejosoft.com>
 }
 {$ENDREGION}
-unit ooCrypto.Text.Base64;
+unit Base64Cipher;
 
 interface
 
 uses
-  ooCrypto.Text.Intf;
+  Cipher;
 
 type
 {$REGION 'documentation'}
@@ -36,7 +36,7 @@ type
   )
 }
 {$ENDREGION}
-  TCryptoTextBase64 = class sealed(TInterfacedObject, ICryptoText)
+  TBase64Cipher = class sealed(TInterfacedObject, ICipher)
   strict private
   const
     ENCODE_TABLE: array [1 .. 65] of AnsiChar = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
@@ -45,17 +45,17 @@ type
   public
     function Encode(const Text: string): string;
     function Decode(const Text: string): string;
-    class function New: ICryptoText;
+    class function New: ICipher;
   end;
 
 implementation
 
-function TCryptoTextBase64.FindInTable(const Letter: AnsiChar): Byte;
+function TBase64Cipher.FindInTable(const Letter: AnsiChar): Byte;
 begin
   Result := Pred(Pos(Letter, ENCODE_TABLE));
 end;
 
-function TCryptoTextBase64.Decode(const Text: string): string;
+function TBase64Cipher.Decode(const Text: string): string;
 var
   SrcLen, Times, i: integer;
   x1, x2, x3, x4, xt: Byte;
@@ -90,7 +90,7 @@ begin
   Result := String(Decoded);
 end;
 
-function TCryptoTextBase64.Encode(const Text: string): string;
+function TBase64Cipher.Encode(const Text: string): string;
 var
   Times, LenSrc, i: integer;
   x1, x2, x3, x4: AnsiChar;
@@ -142,9 +142,9 @@ begin
   Result := String(Encoded);
 end;
 
-class function TCryptoTextBase64.New: ICryptoText;
+class function TBase64Cipher.New: ICipher;
 begin
-  Result := TCryptoTextBase64.Create;
+  Result := TBase64Cipher.Create;
 end;
 
 end.

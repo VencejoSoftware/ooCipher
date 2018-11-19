@@ -10,20 +10,20 @@
   @author Vencejo Software <www.vencejosoft.com>
 }
 {$ENDREGION}
-unit ooCrypto.Text.RandomNoise;
+unit RandomNoiseCipher;
 
 interface
 
 uses
-  ooCrypto.Text.Intf;
+  Cipher;
 
 type
 {$REGION 'documentation'}
 {
-  @abstract(Implementation of @link(ICryptoText))
+  @abstract(Implementation of @link(ICipher))
   Use a random noise algorithm to encrypt/decrypt text
-  @member(Encode @SeeAlso(ICryptoText.Encode))
-  @member(Decode @SeeAlso(ICryptoText.Decode))
+  @member(Encode @SeeAlso(ICipher.Encode))
+  @member(Decode @SeeAlso(ICipher.Decode))
   @member(Codes64 Base text to use in algorithm)
   @member(
     DecodePWDEx Decode algorithm
@@ -63,7 +63,7 @@ type
   )
 }
 {$ENDREGION}
-  TCryptoTextRandomNoise = class sealed(TInterfacedObject, ICryptoText)
+  TRandomNoiseCipher = class sealed(TInterfacedObject, ICipher)
   strict private
   type
     TCryptoNoise = 0 .. 100;
@@ -81,22 +81,22 @@ type
     function Encode(const Text: string): string;
     function Decode(const Text: string): string;
     constructor Create(const Key: string; const MinNoise, MaxNoise: TCryptoNoise);
-    class function New(const Key: string; const MinNoise: TCryptoNoise = 0; MaxNoise: TCryptoNoise = 5): ICryptoText;
+    class function New(const Key: string; const MinNoise: TCryptoNoise = 0; MaxNoise: TCryptoNoise = 5): ICipher;
   end;
 
 implementation
 
-function TCryptoTextRandomNoise.Decode(const Text: string): string;
+function TRandomNoiseCipher.Decode(const Text: string): string;
 begin
   Result := DecodePWDEx(Text, _Key);
 end;
 
-function TCryptoTextRandomNoise.Encode(const Text: string): string;
+function TRandomNoiseCipher.Encode(const Text: string): string;
 begin
   Result := EncodePWDEx(Text, _Key, _MinNoise, _MaxNoise);
 end;
 
-function TCryptoTextRandomNoise.MakeRNDString(const Chars: string; const Count: Cardinal): string;
+function TRandomNoiseCipher.MakeRNDString(const Chars: string; const Count: Cardinal): string;
 var
   i, x, LenBaseChars: Cardinal;
   BaseChars: string;
@@ -112,7 +112,7 @@ begin
   end;
 end;
 
-function TCryptoTextRandomNoise.IsValidSecurityString(const SecurityString: string): Boolean;
+function TRandomNoiseCipher.IsValidSecurityString(const SecurityString: string): Boolean;
 var
   i, LenSecStr: integer;
   s1: string;
@@ -120,17 +120,17 @@ begin
   Result := False;
   LenSecStr := Length(SecurityString);
   if LenSecStr < 16 then
-    raise ECryptoText.Create('Security string is too small');
+    raise ECipher.Create('Security string is too small');
   for i := 1 to LenSecStr do
   begin
     s1 := Copy(SecurityString, Succ(i), LenSecStr);
     Result := (Pos(SecurityString[i], s1) < 1) and (Pos(SecurityString[i], CODES_64) > 0);
     if not Result then
-      raise ECryptoText.Create('Can not validate security string');
+      raise ECipher.Create('Can not validate security string');
   end;
 end;
 
-function TCryptoTextRandomNoise.EncodePWDEx(const Text, SecurityString: string;
+function TRandomNoiseCipher.EncodePWDEx(const Text, SecurityString: string;
   const MinNoise, MaxNoise: TCryptoNoise): string;
 var
   i, x: integer;
@@ -158,7 +158,7 @@ begin
     Result := Result + s2[i] + MakeRNDString(s1, Succ(Random(MaxNoise - MinNoise) + MinNoise));
 end;
 
-function TCryptoTextRandomNoise.DecodePWDEx(const Text, SecurityString: string): string;
+function TRandomNoiseCipher.DecodePWDEx(const Text, SecurityString: string): string;
 var
   i, x, x2: integer;
   Data, s1, s2, ss: string;
@@ -191,7 +191,7 @@ begin
   Result := s2;
 end;
 
-constructor TCryptoTextRandomNoise.Create(const Key: string; const MinNoise, MaxNoise: TCryptoNoise);
+constructor TRandomNoiseCipher.Create(const Key: string; const MinNoise, MaxNoise: TCryptoNoise);
 begin
   if not IsValidSecurityString(Key) then
     Exit;
@@ -208,10 +208,10 @@ begin
   _Key := Key;
 end;
 
-class function TCryptoTextRandomNoise.New(const Key: string; const MinNoise: TCryptoNoise = 0;
-  MaxNoise: TCryptoNoise = 5): ICryptoText;
+class function TRandomNoiseCipher.New(const Key: string; const MinNoise: TCryptoNoise = 0;
+  MaxNoise: TCryptoNoise = 5): ICipher;
 begin
-  Result := TCryptoTextRandomNoise.Create(Key, MinNoise, MaxNoise);
+  Result := TRandomNoiseCipher.Create(Key, MinNoise, MaxNoise);
 end;
 
 end.

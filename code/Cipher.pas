@@ -10,7 +10,7 @@
   @author Vencejo Software <www.vencejosoft.com>
 }
 {$ENDREGION}
-unit ooCrypto.Text.Intf;
+unit Cipher;
 
 interface
 
@@ -23,7 +23,7 @@ type
   Base class for cryptographic error object
 }
 {$ENDREGION}
-  ECryptoText = class(Exception)
+  ECipher = class(Exception)
   end;
 {$REGION 'documentation'}
 {
@@ -42,7 +42,7 @@ type
 }
 {$ENDREGION}
 
-  ICryptoText = interface
+  ICipher = interface
     ['{E1A41D6F-8DAE-414D-AA67-CDF1FE90854F}']
     function Encode(const Text: String): string;
     function Decode(const Text: String): string;

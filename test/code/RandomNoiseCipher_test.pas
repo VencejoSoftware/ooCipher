@@ -3,15 +3,15 @@
   Distributed under the terms of the Modified BSD License
   The full license is distributed with this software
 }
-unit ooCrypto.Text.RandomNoise_test;
+unit RandomNoiseCipher_test;
 
 interface
 
 uses
   SysUtils, Forms,
-  ooCrypto.Text.Intf,
-  ooCrypto.Text.RandomNoise.RandomKey,
-  ooCrypto.Text.RandomNoise,
+  Cipher,
+  NoiseRandomKey,
+  RandomNoiseCipher,
 {$IFDEF FPC}
   fpcunit, testregistry
 {$ELSE}
@@ -20,7 +20,7 @@ uses
 {$ENDIF};
 
 type
-  TCryptoTextRandomNoiseTest = class sealed(TTestCase)
+  TRandomNoiseCipherTest = class sealed(TTestCase)
   published
     procedure EncryptSameTextWithMultipleReturn;
     procedure TryToUseSecurityKeyInvalid;
@@ -30,16 +30,16 @@ type
 
 implementation
 
-procedure TCryptoTextRandomNoiseTest.EncodeWithInvalidKeyRaiseError;
+procedure TRandomNoiseCipherTest.EncodeWithInvalidKeyRaiseError;
 var
   Failed: Boolean;
   Encoded: String;
 begin
   Failed := False;
   try
-    Encoded := TCryptoTextRandomNoise.New('123456781234567812345678', 5, 0).Encode('text');
+    Encoded := TRandomNoiseCipher.New('123456781234567812345678', 5, 0).Encode('text');
   except
-    on E: ECryptoText do
+    on E: ECipher do
     begin
       CheckEquals('Can not validate security string', E.Message);
       Failed := True;
@@ -48,45 +48,45 @@ begin
   CheckTrue(Failed);
 end;
 
-procedure TCryptoTextRandomNoiseTest.EncryptSameTextWithMultipleReturn;
+procedure TRandomNoiseCipherTest.EncryptSameTextWithMultipleReturn;
 const
   SOURCE_TEXT = 'test 1234 encrypt ~+*@!#$%_''¿¡?';
 var
   SC, Encoded: String;
-  CryptoTextRandomNoise: ICryptoText;
+  CryptoTextRandomNoise: ICipher;
 begin
-  SC := TCryptoTextRandomNoiseRandomKey.New.Build;
-  CryptoTextRandomNoise := TCryptoTextRandomNoise.New(SC);
+  SC := TNoiseRandomKey.New.Build;
+  CryptoTextRandomNoise := TRandomNoiseCipher.New(SC);
   Encoded := CryptoTextRandomNoise.Encode(SOURCE_TEXT);
   CheckTrue(CryptoTextRandomNoise.Decode(Encoded) = SOURCE_TEXT);
-  CheckTrue(CryptoTextRandomNoise.Encode(SOURCE_TEXT) <> TCryptoTextRandomNoise.New(SC).Encode(SOURCE_TEXT));
+  CheckTrue(CryptoTextRandomNoise.Encode(SOURCE_TEXT) <> TRandomNoiseCipher.New(SC).Encode(SOURCE_TEXT));
 end;
 
-procedure TCryptoTextRandomNoiseTest.MinNoiseIsGreaterThanMaxNoise;
+procedure TRandomNoiseCipherTest.MinNoiseIsGreaterThanMaxNoise;
 const
   SOURCE_TEXT = 'test 1234 encrypt ~+*@!#$%_''¿¡?';
 var
   SC, Encoded: String;
-  CryptoTextRandomNoise: ICryptoText;
+  CryptoTextRandomNoise: ICipher;
 begin
-  SC := TCryptoTextRandomNoiseRandomKey.New.Build;
-  CryptoTextRandomNoise := TCryptoTextRandomNoise.New(SC, 5, 0);
+  SC := TNoiseRandomKey.New.Build;
+  CryptoTextRandomNoise := TRandomNoiseCipher.New(SC, 5, 0);
   Encoded := CryptoTextRandomNoise.Encode(SOURCE_TEXT);
   CheckTrue(CryptoTextRandomNoise.Decode(Encoded) = SOURCE_TEXT);
-  CheckTrue(CryptoTextRandomNoise.Encode(SOURCE_TEXT) <> TCryptoTextRandomNoise.New(SC).Encode(SOURCE_TEXT));
+  CheckTrue(CryptoTextRandomNoise.Encode(SOURCE_TEXT) <> TRandomNoiseCipher.New(SC).Encode(SOURCE_TEXT));
 end;
 
-procedure TCryptoTextRandomNoiseTest.TryToUseSecurityKeyInvalid;
+procedure TRandomNoiseCipherTest.TryToUseSecurityKeyInvalid;
 var
-  CryptoTextRandomNoise: ICryptoText;
+  CryptoTextRandomNoise: ICipher;
   ErrorFound: Boolean;
 begin
   ErrorFound := False;
   try
-    CryptoTextRandomNoise := TCryptoTextRandomNoise.New(EmptyStr);
+    CryptoTextRandomNoise := TRandomNoiseCipher.New(EmptyStr);
     CryptoTextRandomNoise.Encode('Test');
   except
-    on E: ECryptoText do
+    on E: ECipher do
       ErrorFound := True;
   end;
   CheckTrue(ErrorFound);
@@ -94,6 +94,6 @@ end;
 
 initialization
 
-RegisterTest(TCryptoTextRandomNoiseTest {$IFNDEF FPC}.Suite {$ENDIF});
+RegisterTest(TRandomNoiseCipherTest {$IFNDEF FPC}.Suite {$ENDIF});
 
 end.

@@ -122,35 +122,35 @@
         <IsPartOfProject Value="True"/>
       </Unit0>
       <Unit1>
-        <Filename Value="..\code\ooCrypto.Text.RandomNoise.RandomKey_test.pas"/>
+        <Filename Value="..\..\code\Base64Cipher.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit1>
       <Unit2>
-        <Filename Value="..\code\ooCrypto.Text.RandomNoise_test.pas"/>
+        <Filename Value="..\..\code\Cipher.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit2>
       <Unit3>
-        <Filename Value="..\..\code\ooCrypto.Text.Base64.pas"/>
+        <Filename Value="..\..\code\NoiseRandomKey.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit3>
       <Unit4>
-        <Filename Value="..\..\code\ooCrypto.Text.Intf.pas"/>
+        <Filename Value="..\..\code\RandomKey.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit4>
       <Unit5>
-        <Filename Value="..\..\code\ooCrypto.Text.RandomKey.Intf.pas"/>
+        <Filename Value="..\..\code\RandomNoiseCipher.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit5>
       <Unit6>
-        <Filename Value="..\..\code\ooCrypto.Text.RandomNoise.pas"/>
+        <Filename Value="..\code\Base64Cipher_test.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit6>
       <Unit7>
-        <Filename Value="..\..\code\ooCrypto.Text.RandomNoise.RandomKey.pas"/>
+        <Filename Value="..\code\NoiseRandomKey_test.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit7>
       <Unit8>
-        <Filename Value="..\code\ooCrypto.Text.Base64_test.pas"/>
+        <Filename Value="..\code\RandomNoiseCipher_test.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit8>
     </Units>

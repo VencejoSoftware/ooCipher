@@ -10,19 +10,19 @@
   @author Vencejo Software <www.vencejosoft.com>
 }
 {$ENDREGION}
-unit ooCrypto.Text.RandomNoise.RandomKey;
+unit NoiseRandomKey;
 
 interface
 
 uses
-  ooCrypto.Text.RandomNoise,
-  ooCrypto.Text.RandomKey.Intf;
+  RandomNoiseCipher,
+  RandomKey;
 
 type
 {$REGION 'documentation'}
 {
-  @abstract(Implementation of @link(ICryptoTextRandomKey))
-  @member(Build @SeeAlso(ICryptoTextRandomKey.Build))
+  @abstract(Implementation of @link(ICipherRandomKey))
+  @member(Build @SeeAlso(ICipherRandomKey.Build))
   @member(
     Create Object constructor
     @param(Size Length text to generate)
@@ -33,23 +33,23 @@ type
   )
 }
 {$ENDREGION}
-  TCryptoTextRandomNoiseRandomKey = class sealed(TInterfacedObject, ICryptoTextRandomKey)
+  TNoiseRandomKey = class sealed(TInterfacedObject, IRandomKey)
   strict private
     _Size: Byte;
   public
     function Build: String;
     constructor Create(Const Size: Byte);
-    class function New(Const Size: Byte = 15): ICryptoTextRandomKey;
+    class function New(Const Size: Byte = 15): IRandomKey;
   end;
 
 implementation
 
-function TCryptoTextRandomNoiseRandomKey.Build: String;
+function TNoiseRandomKey.Build: String;
 var
   i, NewCharIndex, LenGenerated: integer;
   BaseText: string;
 begin
-  BaseText := TCryptoTextRandomNoise.CODES_64;
+  BaseText := TRandomNoiseCipher.CODES_64;
   Result := '';
   for i := 0 to _Size do
   begin
@@ -61,14 +61,14 @@ begin
   end;
 end;
 
-constructor TCryptoTextRandomNoiseRandomKey.Create(const Size: Byte);
+constructor TNoiseRandomKey.Create(const Size: Byte);
 begin
   _Size := Size;
 end;
 
-class function TCryptoTextRandomNoiseRandomKey.New(const Size: Byte = 15): ICryptoTextRandomKey;
+class function TNoiseRandomKey.New(const Size: Byte = 15): IRandomKey;
 begin
-  Result := TCryptoTextRandomNoiseRandomKey.Create(Size);
+  Result := TNoiseRandomKey.Create(Size);
 end;
 
 end.
