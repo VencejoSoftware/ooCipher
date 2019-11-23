@@ -1,6 +1,6 @@
 {$REGION 'documentation'}
 {
-  Copyright (c) 2018, Vencejo Software
+  Copyright (c) 2019, Vencejo Software
   Distributed under the terms of the Modified BSD License
   The full license is distributed with this software
 }
@@ -15,7 +15,8 @@ unit RandomNoiseCipher;
 interface
 
 uses
-  Cipher;
+  Cipher,
+  KeyCipher;
 
 type
 {$REGION 'documentation'}
@@ -24,6 +25,7 @@ type
   Use a random noise algorithm to encrypt/decrypt text
   @member(Encode @SeeAlso(ICipher.Encode))
   @member(Decode @SeeAlso(ICipher.Decode))
+  @member(ChangeKey @SeeAlso(ICipher.ChangeKey))
   @member(Codes64 Base text to use in algorithm)
   @member(
     DecodePWDEx Decode algorithm
@@ -49,57 +51,57 @@ type
   )
   @member(
     Create Object constructor
-    @param(Text Uncrypted text to encrypt)
     @param(Key Key to use in crypt algorithm)
     @param(MinNoise Minimun noise algorithm parameter)
     @param(MaxNoise Maximun noise algorithm parameter)
   )
   @member(
     New Create a new @classname as interface
-    @param(Text Uncrypted text to encrypt)
     @param(Key Key to use in crypt algorithm)
     @param(MinNoise Minimun noise algorithm parameter)
     @param(MaxNoise Maximun noise algorithm parameter)
   )
 }
 {$ENDREGION}
-  TRandomNoiseCipher = class sealed(TInterfacedObject, ICipher)
+  TRandomNoiseCipher = class sealed(TInterfacedObject, IKeyCipher)
   strict private
   type
     TCryptoNoise = 0 .. 100;
   strict private
-    _Key: string;
+    _Key: WideString;
     _MinNoise, _MaxNoise: TCryptoNoise;
   public const
     CODES_64 = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+/';
   private
-    function DecodePWDEx(const Text, SecurityString: string): string;
-    function EncodePWDEx(const Text, SecurityString: string; const MinNoise, MaxNoise: TCryptoNoise): string;
-    function MakeRNDString(const Chars: string; const Count: Cardinal): string;
-    function IsValidSecurityString(const SecurityString: string): Boolean;
+    function DecodePWDEx(const Text, SecurityString: WideString): WideString;
+    function EncodePWDEx(const Text, SecurityString: WideString; const MinNoise, MaxNoise: TCryptoNoise): WideString;
+    function MakeRNDString(const Chars: WideString; const Count: Cardinal): WideString;
+    function IsValidSecurityString(const SecurityString: WideString): Boolean;
   public
-    function Encode(const Text: string): string;
-    function Decode(const Text: string): string;
-    constructor Create(const Key: string; const MinNoise, MaxNoise: TCryptoNoise);
-    class function New(const Key: string; const MinNoise: TCryptoNoise = 0; MaxNoise: TCryptoNoise = 5): ICipher;
+    function Encode(const Text: WideString): WideString;
+    function Decode(const Text: WideString): WideString;
+    function IsValidKey(const Key: WideString): Boolean;
+    procedure ChangeKey(const Key: WideString);
+    constructor Create(const Key: WideString; const MinNoise, MaxNoise: TCryptoNoise);
+    class function New(const Key: WideString; const MinNoise: TCryptoNoise = 0; MaxNoise: TCryptoNoise = 5): IKeyCipher;
   end;
 
 implementation
 
-function TRandomNoiseCipher.Decode(const Text: string): string;
+function TRandomNoiseCipher.Decode(const Text: WideString): WideString;
 begin
   Result := DecodePWDEx(Text, _Key);
 end;
 
-function TRandomNoiseCipher.Encode(const Text: string): string;
+function TRandomNoiseCipher.Encode(const Text: WideString): WideString;
 begin
   Result := EncodePWDEx(Text, _Key, _MinNoise, _MaxNoise);
 end;
 
-function TRandomNoiseCipher.MakeRNDString(const Chars: string; const Count: Cardinal): string;
+function TRandomNoiseCipher.MakeRNDString(const Chars: WideString; const Count: Cardinal): WideString;
 var
   i, x, LenBaseChars: Cardinal;
-  BaseChars: string;
+  BaseChars: WideString;
 begin
   Result := '';
   BaseChars := Chars;
@@ -112,7 +114,7 @@ begin
   end;
 end;
 
-function TRandomNoiseCipher.IsValidSecurityString(const SecurityString: string): Boolean;
+function TRandomNoiseCipher.IsValidSecurityString(const SecurityString: WideString): Boolean;
 var
   i, LenSecStr: integer;
   s1: string;
@@ -130,11 +132,11 @@ begin
   end;
 end;
 
-function TRandomNoiseCipher.EncodePWDEx(const Text, SecurityString: string;
-  const MinNoise, MaxNoise: TCryptoNoise): string;
+function TRandomNoiseCipher.EncodePWDEx(const Text, SecurityString: WideString; const MinNoise, MaxNoise: TCryptoNoise)
+  : WideString;
 var
   i, x: integer;
-  s1, s2, ss: string;
+  s1, s2, ss: WideString;
 begin
   Result := '';
   s1 := CODES_64;
@@ -158,10 +160,10 @@ begin
     Result := Result + s2[i] + MakeRNDString(s1, Succ(Random(MaxNoise - MinNoise) + MinNoise));
 end;
 
-function TRandomNoiseCipher.DecodePWDEx(const Text, SecurityString: string): string;
+function TRandomNoiseCipher.DecodePWDEx(const Text, SecurityString: WideString): WideString;
 var
   i, x, x2: integer;
-  Data, s1, s2, ss: string;
+  Data, s1, s2, ss: WideString;
 begin
   Result := #1;
   Data := Text;
@@ -191,7 +193,17 @@ begin
   Result := s2;
 end;
 
-constructor TRandomNoiseCipher.Create(const Key: string; const MinNoise, MaxNoise: TCryptoNoise);
+function TRandomNoiseCipher.IsValidKey(const Key: WideString): Boolean;
+begin
+  Result := Key = _Key;
+end;
+
+procedure TRandomNoiseCipher.ChangeKey(const Key: WideString);
+begin
+  _Key := Key;
+end;
+
+constructor TRandomNoiseCipher.Create(const Key: WideString; const MinNoise, MaxNoise: TCryptoNoise);
 begin
   if not IsValidSecurityString(Key) then
     Exit;
@@ -208,8 +220,8 @@ begin
   _Key := Key;
 end;
 
-class function TRandomNoiseCipher.New(const Key: string; const MinNoise: TCryptoNoise = 0;
-  MaxNoise: TCryptoNoise = 5): ICipher;
+class function TRandomNoiseCipher.New(const Key: WideString; const MinNoise: TCryptoNoise = 0;
+  MaxNoise: TCryptoNoise = 5): IKeyCipher;
 begin
   Result := TRandomNoiseCipher.Create(Key, MinNoise, MaxNoise);
 end;

@@ -26,14 +26,23 @@ type
     procedure TryToUseSecurityKeyInvalid;
     procedure MinNoiseIsGreaterThanMaxNoise;
     procedure EncodeWithInvalidKeyRaiseError;
+    procedure CheckKeyReturnTrue;
   end;
 
 implementation
 
+procedure TRandomNoiseCipherTest.CheckKeyReturnTrue;
+var
+  Key: WideString;
+begin
+  Key := TNoiseRandomKey.New.Build;
+  CheckTrue(TRandomNoiseCipher.New(Key, 5, 0).IsValidKey(Key))
+end;
+
 procedure TRandomNoiseCipherTest.EncodeWithInvalidKeyRaiseError;
 var
   Failed: Boolean;
-  Encoded: String;
+  Encoded: WideString;
 begin
   Failed := False;
   try
@@ -52,7 +61,7 @@ procedure TRandomNoiseCipherTest.EncryptSameTextWithMultipleReturn;
 const
   SOURCE_TEXT = 'test 1234 encrypt ~+*@!#$%_''¿¡?';
 var
-  SC, Encoded: String;
+  SC, Encoded: WideString;
   CryptoTextRandomNoise: ICipher;
 begin
   SC := TNoiseRandomKey.New.Build;
@@ -66,7 +75,7 @@ procedure TRandomNoiseCipherTest.MinNoiseIsGreaterThanMaxNoise;
 const
   SOURCE_TEXT = 'test 1234 encrypt ~+*@!#$%_''¿¡?';
 var
-  SC, Encoded: String;
+  SC, Encoded: WideString;
   CryptoTextRandomNoise: ICipher;
 begin
   SC := TNoiseRandomKey.New.Build;

@@ -1,6 +1,6 @@
 {$REGION 'documentation'}
 {
-  Copyright (c) 2018, Vencejo Software
+  Copyright (c) 2019, Vencejo Software
   Distributed under the terms of the Modified BSD License
   The full license is distributed with this software
 }
@@ -44,8 +44,8 @@ type
 
   ICipher = interface
     ['{E1A41D6F-8DAE-414D-AA67-CDF1FE90854F}']
-    function Encode(const Text: String): string;
-    function Decode(const Text: String): string;
+    function Encode(const Text: WideString): WideString;
+    function Decode(const Text: WideString): WideString;
   end;
 
 implementation
