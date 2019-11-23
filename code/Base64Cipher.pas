@@ -1,6 +1,6 @@
 {$REGION 'documentation'}
 {
-  Copyright (c) 2018, Vencejo Software
+  Copyright (c) 2019, Vencejo Software
   Distributed under the terms of the Modified BSD License
   The full license is distributed with this software
 }
@@ -43,8 +43,8 @@ type
   private
     function FindInTable(const Letter: AnsiChar): Byte;
   public
-    function Encode(const Text: string): string;
-    function Decode(const Text: string): string;
+    function Encode(const Text: WideString): WideString;
+    function Decode(const Text: WideString): WideString;
     class function New: ICipher;
   end;
 
@@ -55,7 +55,7 @@ begin
   Result := Pred(Pos(Letter, ENCODE_TABLE));
 end;
 
-function TBase64Cipher.Decode(const Text: string): string;
+function TBase64Cipher.Decode(const Text: WideString): WideString;
 var
   SrcLen, Times, i: integer;
   x1, x2, x3, x4, xt: Byte;
@@ -90,7 +90,7 @@ begin
   Result := String(Decoded);
 end;
 
-function TBase64Cipher.Encode(const Text: string): string;
+function TBase64Cipher.Encode(const Text: WideString): WideString;
 var
   Times, LenSrc, i: integer;
   x1, x2, x3, x4: AnsiChar;

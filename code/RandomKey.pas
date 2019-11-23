@@ -1,6 +1,6 @@
 {$REGION 'documentation'}
 {
-  Copyright (c) 2018, Vencejo Software
+  Copyright (c) 2019, Vencejo Software
   Distributed under the terms of the Modified BSD License
   The full license is distributed with this software
 }
@@ -27,7 +27,7 @@ type
 {$ENDREGION}
   IRandomKey = interface
     ['{E1A41D6F-8DAE-414D-AA67-CDF1FE90854F}']
-    function Build: String;
+    function Build: WideString;
   end;
 
 implementation
