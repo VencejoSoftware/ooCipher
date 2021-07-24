@@ -1,5 +1,5 @@
 {
-  Copyright (c) 2019, Vencejo Software
+  Copyright (c) 2021, Vencejo Software
   Distributed under the terms of the Modified BSD License
   The full license is distributed with this software
 }
@@ -8,6 +8,7 @@ program demo;
 uses
   Forms,
   MainForm in '..\code\form\MainForm.pas' {MainForm};
+
 {$R *.res}
 
 begin

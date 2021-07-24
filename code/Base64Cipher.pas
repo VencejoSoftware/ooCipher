@@ -1,6 +1,6 @@
 {$REGION 'documentation'}
 {
-  Copyright (c) 2019, Vencejo Software
+  Copyright (c) 2021, Vencejo Software
   Distributed under the terms of the Modified BSD License
   The full license is distributed with this software
 }
@@ -15,6 +15,7 @@ unit Base64Cipher;
 interface
 
 uses
+  SysUtils,
   Cipher;
 
 type
@@ -28,10 +29,6 @@ type
     ENCODE_TABLE Array characters text to use in algorithm
   )
   @member(
-    FindInTable Find a position of char in the ENCODE_TABLE
-    @param(Letter Char to find)
-  )
-  @member(
     New Create a new @classname as interface
   )
 }
@@ -39,9 +36,7 @@ type
   TBase64Cipher = class sealed(TInterfacedObject, ICipher)
   strict private
   const
-    ENCODE_TABLE: array [1 .. 65] of AnsiChar = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
-  private
-    function FindInTable(const Letter: AnsiChar): Byte;
+    ENCODING_TABLE: array [0 .. 63] of Char = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
   public
     function Encode(const Text: WideString): WideString;
     function Decode(const Text: WideString): WideString;
@@ -50,96 +45,75 @@ type
 
 implementation
 
-function TBase64Cipher.FindInTable(const Letter: AnsiChar): Byte;
-begin
-  Result := Pred(Pos(Letter, ENCODE_TABLE));
-end;
-
 function TBase64Cipher.Decode(const Text: WideString): WideString;
 var
-  SrcLen, Times, i: integer;
-  x1, x2, x3, x4, xt: Byte;
-  Encoded, Decoded: AnsiString;
+  i: Integer;
+  a: Integer;
+  x: Integer;
+  b: Integer;
 begin
-  Decoded := '';
-  Encoded := AnsiString(Text);
-  SrcLen := Length(Text);
-  Times := SrcLen div 4;
-  for i := 0 to Pred(Times) do
+  Result := '';
+  a := 0;
+  b := 0;
+  for i := 1 to Length(Text) do
   begin
-    x1 := FindInTable(Encoded[1 + i * 4]);
-    x2 := FindInTable(Encoded[2 + i * 4]);
-    x3 := FindInTable(Encoded[3 + i * 4]);
-    x4 := FindInTable(Encoded[4 + i * 4]);
-    x1 := Byte(x1 shl 2);
-    xt := Byte(x2 shr 4);
-    x1 := x1 or xt;
-    x2 := Byte(x2 shl 4);
-    Decoded := Decoded + AnsiChar(x1);
-    if x3 = 64 then
-      break;
-    xt := Byte(x3 shr 2);
-    x2 := x2 or xt;
-    x3 := Byte(x3 shl 6);
-    Decoded := Decoded + AnsiChar(x2);
-    if x4 = 64 then
-      break;
-    x3 := x3 or x4;
-    Decoded := Decoded + AnsiChar(x3);
+    x := Pos(Text[i], ENCODING_TABLE) - 1;
+    if x >= 0 then
+    begin
+      b := b * 64 + x;
+      a := a + 6;
+      if a >= 8 then
+      begin
+        a := a - 8;
+        x := b shr a;
+        b := b mod (1 shl a);
+        x := x mod 256;
+        Result := Result + chr(x);
+      end;
+    end
+    else
+      Exit;
   end;
-  Result := String(Decoded);
 end;
 
 function TBase64Cipher.Encode(const Text: WideString): WideString;
-var
-  Times, LenSrc, i: integer;
-  x1, x2, x3, x4: AnsiChar;
-  xt: Byte;
-  Encoded, Decoded: AnsiString;
-begin
-  Encoded := '';
-  Decoded := AnsiString(Text);
-  LenSrc := Length(Decoded);
-  if LenSrc mod 3 = 0 then
-    Times := LenSrc div 3
-  else
-    Times := Succ(LenSrc div 3);
-  for i := 0 to Pred(Times) do
+  function Encode3Bytes(const Byte1, Byte2, Byte3: Byte): string;
   begin
-    if LenSrc >= (3 + i * 3) then
-    begin
-      x1 := ENCODE_TABLE[(ord(Decoded[1 + i * 3]) shr 2) + 1];
-      xt := Byte(ord(Decoded[1 + i * 3]) shl 4) and 48;
-      xt := xt or (ord(Decoded[2 + i * 3]) shr 4);
-      x2 := ENCODE_TABLE[xt + 1];
-      xt := Byte(ord(Decoded[2 + i * 3]) shl 2) and 60;
-      xt := xt or (ord(Decoded[3 + i * 3]) shr 6);
-      x3 := ENCODE_TABLE[xt + 1];
-      xt := (ord(Decoded[3 + i * 3]) and 63);
-      x4 := ENCODE_TABLE[xt + 1];
-    end
-    else
-      if LenSrc >= (2 + i * 3) then
-      begin
-        x1 := ENCODE_TABLE[(ord(Decoded[1 + i * 3]) shr 2) + 1];
-        xt := Byte(ord(Decoded[1 + i * 3]) shl 4) and 48;
-        xt := xt or (ord(Decoded[2 + i * 3]) shr 4);
-        x2 := ENCODE_TABLE[xt + 1];
-        xt := Byte(ord(Decoded[2 + i * 3]) shl 2) and 60;
-        x3 := ENCODE_TABLE[xt + 1];
-        x4 := '=';
-      end
-      else
-      begin
-        x1 := ENCODE_TABLE[(ord(Decoded[1 + i * 3]) shr 2) + 1];
-        xt := Byte(ord(Decoded[1 + i * 3]) shl 4) and 48;
-        x2 := ENCODE_TABLE[xt + 1];
-        x3 := '=';
-        x4 := '=';
-      end;
-    Encoded := Encoded + x1 + x2 + x3 + x4;
+    Result := ENCODING_TABLE[Byte1 shr 2] + ENCODING_TABLE[((Byte1 shl 4) or (Byte2 shr 4)) and $3F] +
+      ENCODING_TABLE[((Byte2 shl 2) or (Byte3 shr 6)) and $3F] + ENCODING_TABLE[Byte3 and $3F];
   end;
-  Result := String(Encoded);
+
+  function EncodeLast2Bytes(const Byte1, Byte2: Byte): string;
+  begin
+    Result := ENCODING_TABLE[Byte1 shr 2] + ENCODING_TABLE[((Byte1 shl 4) or (Byte2 shr 4)) and $3F] +
+      ENCODING_TABLE[(Byte2 shl 2) and $3F] + '=';
+  end;
+
+  function EncodeLast1Byte(const Byte1: Byte): string;
+  begin
+    Result := ENCODING_TABLE[Byte1 shr 2] + ENCODING_TABLE[(Byte1 shl 4) and $3F] + '==';
+  end;
+
+var
+  i, iLength: Cardinal;
+  Input: TBytes;
+begin
+  Result := '';
+  Input := BytesOf(Text);
+  iLength := Length(Input);
+  i := 0;
+  while i < iLength do
+  begin
+    case iLength - i of
+      3 .. MaxInt:
+        Result := Result + Encode3Bytes(Input[i], Input[i + 1], Input[i + 2]);
+      2:
+        Result := Result + EncodeLast2Bytes(Input[i], Input[Succ(i)]);
+      1:
+        Result := Result + EncodeLast1Byte(Input[i]);
+    end;
+    Inc(i, 3);
+  end;
 end;
 
 class function TBase64Cipher.New: ICipher;
