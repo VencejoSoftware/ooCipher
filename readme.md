@@ -1,21 +1,21 @@
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![Build Status](https://travis-ci.org/VencejoSoftware/ooCipher.svg?branch=master)](https://travis-ci.org/VencejoSoftware/ooCipher)
 
-# ooCrypt- Object pascal cryptographic utils
-Code to encrypt/decrypt text data
+# ooCipher- Object pascal cryptographic functions
+Code to encrypt/decrypt text contents
 
 ### Example of encode/decode with base 64
 ```pascal
-  Decoded := TCryptoTextBase64.New.Decode('VGVzdCAxMjM0IEAg0Q==');
+  Decoded := TBase64Cipher.New.Decode('VGVzdCAxMjM0IEAg0Q==');
   ...
-  Encoded := TCryptoTextBase64.New.Encode('Test 1234 @ Ñ');
+  Encoded := TBase64Cipher.New.Encode('Test 1234 @ Ñ');
 ```
 
 ### Example of encode/decode with noise algorithm
 ```pascal
-  Decoded := TCryptoTextRandomNoise.New('123456781234567812345678').Decode('~+*@!#$%_');
+  Decoded := TRandomNoiseCipher.New('123456781234567812345678').Decode('~+*@!#$%_');
   ...
-  Encoded := TCryptoTextRandomNoise.New('123456781234567812345678').Encode('text');
+  Encoded := TRandomNoiseCipher.New('123456781234567812345678').Encode('text');
 ```
 
 ### Documentation
